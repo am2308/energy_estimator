@@ -17,10 +17,12 @@ class EnergyCalculator:
                     if i == 1:
                         LedUsage = LedUsage + 5 * float(UniqueConsumption[i].split(' ')[2].split('+')[1]) * TimeTaken
                     else:
-                        EnergyUnitDiffOverTime = float(UniqueConsumption[i].split(' ')[2].split('+')[1]) + abs(float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1]))
+                        OldEneryUnits = abs(float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1]))
+                        EnergyUnitDiffOverTime = float(UniqueConsumption[i].split(' ')[2].split('+')[1]) + OldEneryUnits
                         LedUsage = LedUsage + 5 * EnergyUnitDiffOverTime * TimeTaken
                 elif UniqueConsumption[i].split(' ')[2].startswith('-'):
-                    EnergyUnitDiffOverTime = abs(float(UniqueConsumption[i].split(' ')[2].split('-')[1]) - float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1]))
+                    OldEneryUnits = float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1])
+                    EnergyUnitDiffOverTime = abs(float(UniqueConsumption[i].split(' ')[2].split('-')[1]) - OldEneryUnits)
                     LedUsage = LedUsage + 5 * EnergyUnitDiffOverTime * TimeTaken
 
         return LedUsage
