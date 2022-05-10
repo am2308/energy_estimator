@@ -12,13 +12,16 @@ class EnergyCalculator:
         logging.info("Removing duplicate and random entries")
         for i in range(0,len(UniqueConsumption)):
             if "TurnOff" not in UniqueConsumption[i]:
+                TimeTaken = (int(UniqueConsumption[i+1].split(' ')[0]) - int(UniqueConsumption[i].split(' ')[0]))/3600
                 if UniqueConsumption[i].split(' ')[2].startswith('+'):
                     if i == 1:
-                        LedUsage = LedUsage + 5 * float(UniqueConsumption[i].split(' ')[2].split('+')[1]) * ((int(UniqueConsumption[i+1].split(' ')[0]) - int(UniqueConsumption[i].split(' ')[0]))/3600)
+                        LedUsage = LedUsage + 5 * float(UniqueConsumption[i].split(' ')[2].split('+')[1]) * TimeTaken
                     else:
-                        LedUsage = LedUsage + 5 * (float(UniqueConsumption[i].split(' ')[2].split('+')[1]) + abs(float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1]))) * ((int(UniqueConsumption[i+1].split(' ')[0]) - int(UniqueConsumption[i].split(' ')[0]))/3600)
+                        EnergyUnitDiffOverTime = float(UniqueConsumption[i].split(' ')[2].split('+')[1]) + abs(float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1]))
+                        LedUsage = LedUsage + 5 * EnergyUnitDiffOverTime * TimeTaken
                 elif UniqueConsumption[i].split(' ')[2].startswith('-'):
-                    LedUsage = LedUsage + 5 * abs(float(UniqueConsumption[i].split(' ')[2].split('-')[1]) - float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1])) * ((int(UniqueConsumption[i+1].split(' ')[0]) - int(UniqueConsumption[i].split(' ')[0]))/3600)
+                    EnergyUnitDiffOverTime = abs(float(UniqueConsumption[i].split(' ')[2].split('-')[1]) - float(re.split(r'[+-]', UniqueConsumption[i-1].split(' ')[2])[1]))
+                    LedUsage = LedUsage + 5 * EnergyUnitDiffOverTime * TimeTaken
 
         return LedUsage
 
